@@ -14,9 +14,9 @@ extension TextAlignConverter on TextAlign {
       case TextAlign.right:
         return pw.TextAlign.right;
       case TextAlign.start:
-        return pw.TextAlign.start;
+        return pw.TextAlign.left;
       case TextAlign.end:
-        return pw.TextAlign.end;
+        return pw.TextAlign.right;
     }
   }
 }
