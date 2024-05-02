@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:pdf/widgets.dart' as pw;
-
 import 'export_delegate.dart';
 import 'utils.dart';
 import 'widgets/container.dart';
@@ -33,6 +31,8 @@ import 'widgets/grid_view.dart';
 import 'widgets/wrap.dart';
 import 'widgets/table.dart';
 
+String linkURL = '';
+
 /// The delegate handling the low-level export of the widget tree.
 class ExportInstance {
   /// The delegate that is used to export the widget.
@@ -47,8 +47,7 @@ class ExportInstance {
   Future<List<pw.Widget>> _visit(Element element, BuildContext? context) async {
     List<Element> elements = [];
 
-    element
-        .visitChildElements((Element element) async => elements.add(element));
+    element.visitChildElements((Element element) async => elements.add(element));
 
     List<pw.Widget> children = [];
     for (Element e in elements) {
@@ -61,91 +60,61 @@ class ExportInstance {
   /// Matches the widget provided as [element]
   /// and returns the corresponding [pw.Widget].
   /// The [context] is only null when called from [exportFunc].
-  Future<List<pw.Widget>> matchWidget(
-      Element element, BuildContext? context) async {
+  Future<List<pw.Widget>> matchWidget(Element element, BuildContext? context) async {
     final Widget widget = element.widget;
 
     switch (widget.runtimeType) {
       case MergeSemantics: //anchor: end of widget tree
         return [];
+      case Visibility: //anchor: end of widget tree
+        if ((element.widget as Visibility).child is Text) {
+          linkURL = linkURL.isNotEmpty ? linkURL : ((element.widget as Visibility).child as Text).data ?? '';
+        }
+        return [];
       case Container:
         final List children = await _visit(element, context);
         return [
-          await (widget as Container)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
+          await (widget as Container).toPdfWidget(children.isNotEmpty ? children.first : null, linkText: linkURL)
         ];
       case Center:
         final List children = await _visit(element, context);
-        return [
-          (widget as Center)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as Center).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case SizedBox:
         final List children = await _visit(element, context);
-        return [
-          (widget as SizedBox)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as SizedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case FittedBox:
         final List children = await _visit(element, context);
-        return [
-          (widget as FittedBox)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as FittedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case LimitedBox:
         final List children = await _visit(element, context);
-        return [
-          (widget as LimitedBox)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as LimitedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case ConstrainedBox:
         final List children = await _visit(element, context);
-        return [
-          (widget as ConstrainedBox)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as ConstrainedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case ClipRect:
         final List children = await _visit(element, context);
-        return [
-          (widget as ClipRect)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as ClipRect).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case ClipRRect:
         final List children = await _visit(element, context);
-        return [
-          (widget as ClipRRect)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as ClipRRect).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case ClipOval:
         final List children = await _visit(element, context);
-        return [
-          (widget as ClipOval)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as ClipOval).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case Transform:
         final List children = await _visit(element, context);
-        return [
-          (widget as Transform)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as Transform).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case Opacity:
         final List children = await _visit(element, context);
-        return [
-          (widget as Opacity)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as Opacity).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case Padding:
         final List children = await _visit(element, context);
-        return [
-          (widget as Padding)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as Padding).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case Align:
         final List children = await _visit(element, context);
-        return [
-          (widget as Align)
-              .toPdfWidget(children.isNotEmpty ? children.first : null)
-        ];
+        return [(widget as Align).toPdfWidget(children.isNotEmpty ? children.first : null)];
+      case InkWell:
+        final List children = await _visit(element, context);
+        return [(widget as Align).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case Positioned:
         final List children = await _visit(element, context);
         return [
@@ -176,22 +145,18 @@ class ExportInstance {
         if (context != null) {
           TextFormField? textFormField;
           if (widget.key == null) {
-            textFormField =
-                element.findAncestorWidgetOfExactType<TextFormField>();
+            textFormField = element.findAncestorWidgetOfExactType<TextFormField>();
             if (textFormField?.key == null) {
               throw Exception('TextField must have a key to be exported');
             }
           }
 
           if (textFormField == null) {
-            Element? contextElement =
-                findElement(context, (TextField e) => e.key == widget.key);
+            Element? contextElement = findElement(context, (TextField e) => e.key == widget.key);
             contextWidget = contextElement!.widget as TextField;
           } else {
-            Element? contextElement = findElement(
-                context, (TextFormField e) => e.key == textFormField!.key);
-            contextElement =
-                findFirstDescendantElement<TextField>(contextElement!);
+            Element? contextElement = findElement(context, (TextFormField e) => e.key == textFormField!.key);
+            contextElement = findFirstDescendantElement<TextField>(contextElement!);
             contextWidget = contextElement!.widget as TextField;
           }
         }
@@ -206,22 +171,15 @@ class ExportInstance {
           if (widget.key == null) {
             throw Exception('Checkbox must have a key to be exported');
           }
-          Element? contextElement =
-              findElement(context, (Checkbox e) => e.key == widget.key);
+          Element? contextElement = findElement(context, (Checkbox e) => e.key == widget.key);
           contextWidget = contextElement!.widget as Checkbox;
         }
-        return [
-          await (widget as Checkbox)
-              .toPdfWidget(delegate.options.checkboxOptions, contextWidget)
-        ];
+        return [await (widget as Checkbox).toPdfWidget(delegate.options.checkboxOptions, contextWidget)];
       case TextButton:
       case ElevatedButton:
       case OutlinedButton:
       case FilledButton:
-        return [
-          (widget as ButtonStyleButton)
-              .toPdfWidget((await _visit(element, context)).first)
-        ];
+        return [(widget as ButtonStyleButton).toPdfWidget((await _visit(element, context)).first)];
       case Column:
         return [(widget as Column).toPdfWidget(await _visit(element, context))];
       case Row:
@@ -229,24 +187,17 @@ class ExportInstance {
       case Stack:
         return [(widget as Stack).toPdfWidget(await _visit(element, context))];
       case ListView:
-        return [
-          (widget as ListView).toPdfWidget(await _visit(element, context))
-        ];
+        return [(widget as ListView).toPdfWidget(await _visit(element, context))];
       case GridView:
         final constraints = BoxConstraints(
           maxWidth: element.renderObject!.paintBounds.right,
           maxHeight: element.renderObject!.paintBounds.bottom,
         );
-        return [
-          (widget as GridView)
-              .toPdfWidget(await _visit(element, context), constraints)
-        ];
+        return [(widget as GridView).toPdfWidget(await _visit(element, context), constraints)];
       case Wrap:
         return [(widget as Wrap).toPdfWidget(await _visit(element, context))];
       case Table:
-        return [
-          await (widget as Table).toPdfWidget(await _visit(element, context))
-        ];
+        return [await (widget as Table).toPdfWidget(await _visit(element, context))];
       default:
         return await _visit(element, context);
     }

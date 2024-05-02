@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_to_pdf/widgets/custom_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_to_pdf/flutter_to_pdf.dart';
 
@@ -43,8 +44,7 @@ class Demo extends StatelessWidget {
                       interactive: false,
                     ),
                   );
-                  final pdf = await exportDelegate.exportToPdfDocument('demo',
-                      overrideOptions: overrideOptions);
+                  final pdf = await exportDelegate.exportToPdfDocument('demo', overrideOptions: overrideOptions);
                   saveFile(pdf, 'static-example');
                 },
                 child: const Row(
@@ -143,20 +143,21 @@ class _QuestionnaireExampleState extends State<QuestionnaireExample> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage('http://i.pravatar.cc/100'),
+                  linkWidget(
+                    linkText: "https://parthvirani.com",
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage('http://i.pravatar.cc/100'),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                      child:
-                          buildNameFields(MediaQuery.of(context).size.width)),
+                  Expanded(child: buildNameFields(MediaQuery.of(context).size.width)),
                 ],
               ),
               const SizedBox(height: 16),
@@ -286,14 +287,12 @@ class _QuestionnaireExampleState extends State<QuestionnaireExample> {
       TextField(
         key: const Key('firstName'),
         controller: firstNameController,
-        decoration: const InputDecoration(
-            labelText: 'First name', border: OutlineInputBorder()),
+        decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
       ),
       TextField(
         key: const Key('lastName'),
         controller: lastNameController,
-        decoration: const InputDecoration(
-            labelText: 'Last name', border: OutlineInputBorder()),
+        decoration: const InputDecoration(labelText: 'Last name', border: OutlineInputBorder()),
       ),
     ];
 
@@ -330,20 +329,17 @@ class _QuestionnaireExampleState extends State<QuestionnaireExample> {
       TextField(
         key: const Key('dateOfBirth'),
         controller: dateOfBirthController,
-        decoration: const InputDecoration(
-            labelText: 'DateOfBirth', border: OutlineInputBorder()),
+        decoration: const InputDecoration(labelText: 'DateOfBirth', border: OutlineInputBorder()),
       ),
       TextField(
         key: const Key('placeOfBrith'),
         controller: placeOfBirthController,
-        decoration: const InputDecoration(
-            labelText: 'Place of birth', border: OutlineInputBorder()),
+        decoration: const InputDecoration(labelText: 'Place of birth', border: OutlineInputBorder()),
       ),
       TextField(
         key: const Key('countryOfBirth'),
         controller: countryOfBirthController,
-        decoration: const InputDecoration(
-            labelText: 'Country of birth', border: OutlineInputBorder()),
+        decoration: const InputDecoration(labelText: 'Country of birth', border: OutlineInputBorder()),
       ),
     ];
 

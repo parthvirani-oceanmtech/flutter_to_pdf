@@ -11,7 +11,8 @@ extension TransformConverter on Transform {
   pw.Transform toPdfWidget(pw.Widget? child) => pw.Transform(
         transform: transform,
         origin: origin != null ? PdfPoint(origin!.dx, origin!.dy) : null,
-        alignment: (alignment as Alignment?)?.toPdfAlignment(),
+        alignment:
+            alignment is Alignment ? (alignment as Alignment).toPdfAlignment() : (Alignment.center).toPdfAlignment(),
         child: child,
       );
 }
