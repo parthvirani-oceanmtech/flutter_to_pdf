@@ -1,8 +1,8 @@
-[![codecov](https://codecov.io/gh/dunef-com/flutter_to_pdf/branch/main/graph/badge.svg?token=5WIYFJ6VND)](https://codecov.io/gh/dunef-com/flutter_to_pdf)
+[![codecov](https://codecov.io/gh/joseph-grabinger/flutter_to_pdf/branch/main/graph/badge.svg?token=5WIYFJ6VND)](https://codecov.io/gh/joseph-grabinger/flutter_to_pdf)
 [![Pub](https://img.shields.io/pub/v/flutter_to_pdf.svg)](https://pub.dev/packages/flutter_to_pdf)
 
 
-The [FlutterToPDF](https://dunef.io/de) package lets you export any Flutter widget to PDF Documents and is written natively in Dart.
+The [FlutterToPDF](https://pub.dev/packages/flutter_to_pdf) package lets you export any Flutter widget to PDF Documents and is written natively in Dart.
 
 ## Installing
 ### Depend on it 
@@ -17,7 +17,7 @@ This will add a line like this to your package's pubspec.yaml (and run an implic
 
 ```yaml
 dependencies:
-    flutter_to_pdf: ^0.0.1
+    flutter_to_pdf: ^0.2.0
 ```
 
 Alternatively, your editor might support `flutter pub get`. Check the docs for your editor to learn more.
@@ -66,6 +66,18 @@ final widget = await exportDelegate.exportToPdfWidget('someFrameId');
 ```
 
 **Note:** If you wish to use types on the variables `pdf`, `page` and `widget`, you can use the `Document`, `Page` and `Widget` classes provided by [PDF-package](https://pub.dev/packages/pdf).
+
+### Custom TTF Fonts
+
+If the widget you want to export contains any custom TTF fonts, you **must** provide the used `ttfFonts` to the `ExportDelegate`.
+
+```dart
+final ExportDelegate exportDelegate = ExportDelegate(
+  ttfFonts: {
+    'SomeFontFamily': 'assets/fonts/someFont.ttf',
+  },
+);
+```
 
 ### TextFields and Checkboxes
 
