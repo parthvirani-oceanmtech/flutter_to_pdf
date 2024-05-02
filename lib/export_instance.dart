@@ -181,16 +181,15 @@ class ExportInstance {
           Text? textWidget;
           Widget? secondWidget;
 
-          if ((children.first.runtimeType is Visibility) &&
-              (children.first.runtimeType as Visibility).visible == false &&
-              (children.first.runtimeType as Visibility).child.runtimeType is Text) {
-            textWidget = children.first as Text;
-
+          if ((children.first is Visibility) &&
+              (children.first as Visibility).visible == false &&
+              (children.first as Visibility).child is Text) {
+            textWidget = (children.first as Visibility).child as Text;
             secondWidget = children.last;
-          } else if ((children.last.runtimeType is Visibility) &&
-              (children.last.runtimeType as Visibility).visible == false &&
-              (children.last.runtimeType as Visibility).child.runtimeType is Text) {
-            textWidget = children.last as Text;
+          } else if ((children.last is Visibility) &&
+              (children.last as Visibility).visible == false &&
+              (children.last as Visibility).child is Text) {
+            textWidget = (children.first as Visibility).child as Text;
             secondWidget = children.first;
           }
 

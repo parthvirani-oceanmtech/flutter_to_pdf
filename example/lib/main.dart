@@ -149,7 +149,7 @@ class _QuestionnaireExampleState extends State<QuestionnaireExample> {
               Row(
                 children: [
                   linkWidget(
-                    linkText: "https://parthvirani.com",
+                    linkText: "tel:+919737027796",
                     child: Container(
                       height: 100,
                       width: 100,
