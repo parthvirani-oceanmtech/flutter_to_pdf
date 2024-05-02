@@ -66,11 +66,6 @@ class ExportInstance {
     switch (widget.runtimeType) {
       case MergeSemantics: //anchor: end of widget tree
         return [];
-      case Visibility: //anchor: end of widget tree
-        if ((element.widget as Visibility).child is Text) {
-          linkURL = linkURL.isNotEmpty ? linkURL : ((element.widget as Visibility).child as Text).data ?? '';
-        }
-        return [];
       case Container:
         final List children = await _visit(element, context);
         return [
@@ -181,7 +176,40 @@ class ExportInstance {
       case FilledButton:
         return [(widget as ButtonStyleButton).toPdfWidget((await _visit(element, context)).first)];
       case Column:
-        return [(widget as Column).toPdfWidget(await _visit(element, context))];
+        var children = (widget as Column).children;
+        if (children.length == 2) {
+          Text? textWidget;
+          Widget? secondWidget;
+
+          if ((children.first.runtimeType is Visibility) &&
+              (children.first.runtimeType as Visibility).visible == false &&
+              (children.first.runtimeType as Visibility).child.runtimeType is Text) {
+            textWidget = children.first as Text;
+
+            secondWidget = children.last;
+          } else if ((children.last.runtimeType is Visibility) &&
+              (children.last.runtimeType as Visibility).visible == false &&
+              (children.last.runtimeType as Visibility).child.runtimeType is Text) {
+            textWidget = children.last as Text;
+            secondWidget = children.first;
+          }
+
+          if (textWidget?.data?.isEmpty ?? true) {
+            textWidget = null;
+          }
+
+          if (textWidget != null && secondWidget != null) {
+            linkURL = textWidget.data!;
+            List<pw.Widget> allWidget = await _visit(element, context);
+            linkURL = '';
+            return [widget.toPdfWidget(allWidget)];
+          } else {
+            return [widget.toPdfWidget(await _visit(element, context))];
+          }
+        } else {
+          return [widget.toPdfWidget(await _visit(element, context))];
+        }
+
       case Row:
         return [(widget as Row).toPdfWidget(await _visit(element, context))];
       case Stack:

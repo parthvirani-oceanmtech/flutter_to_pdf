@@ -11,8 +11,8 @@ import '../args/edge_insets.dart';
 /// Extension on [Container] to convert it to the pdf equivalent [pw.Container].
 extension ContainerConverter on Container {
   /// Converts the [Container] to a [pw.Container].
-  Future<pw.UrlLink> toPdfWidget(pw.Widget? child, {required String linkText}) async => pw.UrlLink(
-        child: pw.Container(
+  Future<pw.Widget> toPdfWidget(pw.Widget? child, {required String linkText}) async => linkText.isEmpty
+      ? pw.Container(
           alignment: (alignment as Alignment?)?.toPdfAlignment(),
           decoration: await (decoration as BoxDecoration?)?.toPdfBoxDecoration(),
           color: color?.toPdfColor(),
@@ -22,7 +22,19 @@ extension ContainerConverter on Container {
           padding: (padding as EdgeInsets?)?.toPdfEdgeInsets(),
           transform: transform,
           child: child,
-        ),
-        destination: linkText,
-      );
+        )
+      : pw.UrlLink(
+          child: pw.Container(
+            alignment: (alignment as Alignment?)?.toPdfAlignment(),
+            decoration: await (decoration as BoxDecoration?)?.toPdfBoxDecoration(),
+            color: color?.toPdfColor(),
+            constraints: constraints?.toPdfBoxConstraints(),
+            foregroundDecoration: await (foregroundDecoration as BoxDecoration?)?.toPdfBoxDecoration(),
+            margin: (margin as EdgeInsets?)?.toPdfEdgeInsets(),
+            padding: (padding as EdgeInsets?)?.toPdfEdgeInsets(),
+            transform: transform,
+            child: child,
+          ),
+          destination: linkText,
+        );
 }
