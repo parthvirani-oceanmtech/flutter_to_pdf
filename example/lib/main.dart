@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
+import 'package:example/image_click_demo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_to_pdf/widgets/custom_widget.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,6 +18,13 @@ class Demo extends StatelessWidget {
       'LoveDays': 'assets/fonts/LoveDays-Regular.ttf',
       'OpenSans': 'assets/fonts/OpenSans-Regular.ttf',
     },
+    options: ExportOptions(
+      pageFormatOptions: PageFormatOptions(
+        width: 320,
+        height: 320,
+        pageFormat: PageFormat.custom,
+      ),
+    ),
   );
 
   Future<void> saveFile(document, String name) async {
@@ -26,60 +36,62 @@ class Demo extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: const Text('Flutter to PDF - Demo'),
         ),
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            title: const Text('Flutter to PDF - Demo'),
-          ),
-          bottomSheet: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                onPressed: () async {
-                  final ExportOptions overrideOptions = ExportOptions(
-                    textFieldOptions: TextFieldOptions.uniform(
-                      interactive: false,
-                    ),
-                    checkboxOptions: CheckboxOptions.uniform(
-                      interactive: false,
-                    ),
-                  );
-                  final pdf = await exportDelegate.exportToPdfDocument('demo', overrideOptions: overrideOptions);
-                  saveFile(pdf, 'static-example');
-                },
-                child: const Row(
-                  children: [
-                    Text('Export as static'),
-                    Icon(Icons.save_alt_outlined),
-                  ],
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final pdf = await exportDelegate.exportToPdfDocument('demo');
-                  saveFile(pdf, 'interactive-example');
-                },
-                child: const Row(
-                  children: [
-                    Text('Export as interactive'),
-                    Icon(Icons.save_alt_outlined),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          body: ExportFrame(
-            frameId: 'demo',
-            exportDelegate: exportDelegate,
-            child: const QuestionnaireExample(),
-          ),
+        body: ExportFrame(
+          frameId: 'demo',
+          exportDelegate: exportDelegate,
+          child: 1 == 1 ? ImageClickDemo() : const QuestionnaireExample(),
         ),
-      );
+        bottomSheet: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: () async {
+                final ExportOptions overrideOptions = ExportOptions(
+                  textFieldOptions: TextFieldOptions.uniform(
+                    interactive: false,
+                  ),
+                  checkboxOptions: CheckboxOptions.uniform(
+                    interactive: false,
+                  ),
+                );
+                final pdf = await exportDelegate.exportToPdfDocument('demo', overrideOptions: overrideOptions);
+                saveFile(pdf, 'static-example');
+              },
+              child: const Row(
+                children: [
+                  Text('Export as static'),
+                  Icon(Icons.save_alt_outlined),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                final pdf = await exportDelegate.exportToPdfDocument('demo');
+                saveFile(pdf, 'interactive-example');
+              },
+              child: const Row(
+                children: [
+                  Text('Export as interactive'),
+                  Icon(Icons.save_alt_outlined),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class QuestionnaireExample extends StatefulWidget {

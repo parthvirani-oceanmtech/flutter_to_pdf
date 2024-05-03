@@ -75,8 +75,20 @@ class ExportInstance {
         final List children = await _visit(element, context);
         return [(widget as Center).toPdfWidget(children.isNotEmpty ? children.first : null)];
       case SizedBox:
-        final List children = await _visit(element, context);
-        return [(widget as SizedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
+        var child = (widget as SizedBox).child;
+        if ((child is Visibility) &&
+            child.visible == false &&
+            child.child is Text &&
+            (((child.child as Text).data?.isNotEmpty) ?? false)) {
+          String linkData = (child.child as Text).data!;
+
+          final List children = await _visit(element, context);
+          return [(widget).toPdfWidget(children.isNotEmpty ? children.first : null, linkData: linkData)];
+        } else {
+          final List children = await _visit(element, context);
+          return [(widget).toPdfWidget(children.isNotEmpty ? children.first : null, linkData: '')];
+        }
+
       case FittedBox:
         final List children = await _visit(element, context);
         return [(widget as FittedBox).toPdfWidget(children.isNotEmpty ? children.first : null)];
